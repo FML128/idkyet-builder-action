@@ -1,0 +1,28 @@
+name: 'idkyet builder'
+description: 'builder for the idkyet linux project'
+inputs:
+  layer_config_file:
+    description: 'layer config file'
+    required: true
+  out_dir:
+    description: 'out directory'
+    required: true
+  version:
+    description: 'version for release'
+    required: true
+#  sb_db_key:
+#    description: 'secure_boot db key to sign efi'
+#  sb_db_pem:
+#    description: 'secure_boot db pem to sign efi'
+#outputs:
+#  hashes:
+#    description: 'json dict of hashes of all files'
+runs:
+  using: docker
+  image: docker://git.fml128.ch/fml128/idkyet-builder:latest
+  args:
+    _ ${{ inputs.layer_config_file }}
+    _ ${{ inputs.out_dir }}
+    _ ${{ inputs.version }}
+#    _ ${{ inputs.sb_db_key }}
+#    _ ${{ inputs.sb_db_pem }}
