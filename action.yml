@@ -12,8 +12,10 @@ inputs:
     required: true
   sb_db_key:
     description: 'secure_boot db key to sign efi'
+    required: false
   sb_db_pem:
     description: 'secure_boot db pem to sign efi'
+    required: false
 #outputs:
 #  hashes:
 #    description: 'json dict of hashes of all files'
