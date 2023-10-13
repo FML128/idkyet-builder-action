@@ -31,7 +31,8 @@ runs:
         restore-keys: ${{ runner.os }}-${{ github.repository }}-aur-
     - name: Build images
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
-      args: build
+      args:
+        - build
     - name: Upload Packages
       run: |
         cd ${{ gitea.workspace }}/out
