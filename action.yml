@@ -29,23 +29,9 @@ runs:
         path: aur
         key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
         restore-keys: ${{ runner.os }}-${{ github.repository }}-aur-
-#    - name: Build images
-#      uses: ./actions/builder.yml
-#      with:
-#        layer_config_file: ${{ inputs.layer_config_file }}
-#        out_dir: ${{ inputs.out_dir }}
-#        version: ${{ inputs.version }}
-#        sb_db_pem: ${{ inputs.sb_db_pem }}
-#        sb_db_key: ${{ inputs.sb_db_key }}
     - name: Build images
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
       args: build
-      env:
-        layer_config_file: ${{ inputs.layer_config_file }}
-        out_dir: ${{ inputs.out_dir }}
-        version: ${{ inputs.version }}
-        sb_db_pem: ${{ inputs.sb_db_pem }}
-        sb_db_key: ${{ inputs.sb_db_key }} 
     - name: Upload Packages
       run: |
         cd ${{ gitea.workspace }}/out

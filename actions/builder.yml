@@ -22,9 +22,4 @@ inputs:
 runs:
   using: docker
   image: docker://git.fml128.ch/fml128/idkyet-builder:latest
-  args:
-    - ${{ inputs.layer_config_file }}
-    - ${{ inputs.out_dir }}
-    - ${{ inputs.version }}
-    - ${{ inputs.sb_db_key }}
-    - ${{ inputs.sb_db_pem }}
+  args: build
