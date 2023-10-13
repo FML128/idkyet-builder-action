@@ -20,11 +20,52 @@ inputs:
 #  hashes:
 #    description: 'json dict of hashes of all files'
 runs:
-  using: docker
-  image: docker://git.fml128.ch/fml128/idkyet-builder:latest
-  args:
-    - ${{ inputs.layer_config_file }}
-    - ${{ inputs.out_dir }}
-    - ${{ inputs.version }}
-    - ${{ inputs.sb_db_key }}
-    - ${{ inputs.sb_db_pem }}
+  using: "composite"
+  steps:
+    - name: Restore aur cache
+      id: cache-aur-restore
+      uses: https://code.forgejo.org/actions/cache/restore@v3
+      with:
+        path: aur
+        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
+        restore-keys: ${{ runner.os }}-${{ github.repository }}-aur-
+#    - name: Build images
+#      uses: ./actions/builder.yml
+#      with:
+#        layer_config_file: ${{ inputs.layer_config_file }}
+#        out_dir: ${{ inputs.out_dir }}
+#        version: ${{ inputs.version }}
+#        sb_db_pem: ${{ inputs.sb_db_pem }}
+#        sb_db_key: ${{ inputs.sb_db_key }}
+    - name: Build images
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
+      args: build
+      env:
+        layer_config_file: ${{ inputs.layer_config_file }}
+        out_dir: ${{ inputs.out_dir }}
+        version: ${{ inputs.version }}
+        sb_db_pem: ${{ inputs.sb_db_pem }}
+        sb_db_key: ${{ inputs.sb_db_key }} 
+    - name: Upload Packages
+      run: |
+        cd ${{ gitea.workspace }}/out
+        for f in *;do
+          echo "Uploading $f"
+          du -sh $f
+          curl --user "${{ gitea.actor }}:${{ secrets.PACKET_TOKEN }}" \
+            --upload-file "$f" \
+            "https://git.fml128.ch/api/packages/fml128/generic/idkyet-fml128/${{ steps.version.outputs.RELEASE_VERSION }}/$f"
+        done
+    - name: If failure delete packages
+      if: failure()
+      run: |
+        curl --user "${{ gitea.actor }}:${{ secrets.PACKET_TOKEN }}" \
+          -X DELETE \
+          "https://git.fml128.ch/api/packages/fml128/generic/idkyet-fml128/${{ steps.version.outputs.RELEASE_VERSION }}"
+    - name: Save aur cache
+      id: cache-aur-save
+      uses: actions/cache/save@v3
+      with:
+        path: aur
+        #          key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }} #TODO: implement this for better caching
+        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
