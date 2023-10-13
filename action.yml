@@ -41,14 +41,14 @@ runs:
           du -sh $f
           curl --user "${{ gitea.actor }}:${{ secrets.PACKET_TOKEN }}" \
             --upload-file "$f" \
-            "https://git.fml128.ch/api/packages/fml128/generic/idkyet-fml128/${{ steps.version.outputs.RELEASE_VERSION }}/$f"
+            "https://git.fml128.ch/api/packages/${{ github.repository_owner }}/generic/${GITHUB_REPOSITORY#*/}/${{ steps.version.outputs.RELEASE_VERSION }}/$f"
         done
     - name: If failure delete packages
       if: failure()
       run: |
         curl --user "${{ gitea.actor }}:${{ secrets.PACKET_TOKEN }}" \
           -X DELETE \
-          "https://git.fml128.ch/api/packages/fml128/generic/idkyet-fml128/${{ steps.version.outputs.RELEASE_VERSION }}"
+          "https://git.fml128.ch/api/packages/${{ github.repository_owner }}/generic/${GITHUB_REPOSITORY#*/}/${{ steps.version.outputs.RELEASE_VERSION }}"
     - name: Save aur cache
       id: cache-aur-save
       uses: actions/cache/save@v3
