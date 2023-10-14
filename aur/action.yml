@@ -1,0 +1,14 @@
+name: 'idkyet builder'
+description: 'builder for the idkyet linux project'
+inputs:
+  layer_config_file:
+    description: 'layer config file'
+    required: true
+#outputs:
+#  hashes:
+#    description: 'json dict of hashes of all files'
+runs:
+  using: docker
+  image: docker://git.fml128.ch/fml128/idkyet-builder:latest
+  args:
+    - aur
