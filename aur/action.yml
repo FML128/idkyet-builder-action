@@ -20,8 +20,9 @@ runs:
     - name: Build aur
       if: steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
-      args:
-        - aur
+      with:
+        args:
+          - aur
     - name: Save aur cache
       if: steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
