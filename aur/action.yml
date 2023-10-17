@@ -1,5 +1,5 @@
-name: 'idkyet builder'
-description: 'builder for the idkyet linux project'
+name: 'idkyet aur builder'
+description: 'aur builder for the idkyet linux project'
 inputs:
   layer_config_file:
     description: 'layer config file'
@@ -8,7 +8,24 @@ inputs:
 #  hashes:
 #    description: 'json dict of hashes of all files'
 runs:
-  using: docker
-  image: docker://git.fml128.ch/fml128/idkyet-builder:latest
-  args:
-    - aur
+  using: "composite"
+  steps:
+    - name: Restore aur cache
+      id: cache-aur-restore
+      uses: https://code.forgejo.org/actions/cache/restore@v3
+      with:
+        path: aur
+        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
+        restore-keys: ${{ runner.os }}-${{ github.repository }}-aur-
+    - name: Build aur
+      if: steps.cache-aur-restore.outputs.cache-hit != 'true'
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
+      args:
+        - aur
+    - name: Save aur cache
+      if: steps.cache-aur-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: aur
+        #          key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }} #TODO: implement this for better caching
+        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
