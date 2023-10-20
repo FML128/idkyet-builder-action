@@ -22,25 +22,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Restore aur cache
-      id: cache-aur-restore
-      uses: https://code.forgejo.org/actions/cache/restore@v3
-      with:
-        path: aur
-        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
-        restore-keys: ${{ runner.os }}-${{ github.repository }}-aur-
-    - name: Build aur
-      if: steps.cache-aur-restore.outputs.cache-hit != 'true'
-      uses: https://git.fml128.ch/FML128/idkyet-builder-action/aur@main
+    - name: Restore and build aur
+      uses: ./aur
       with:
         layer_config_file: layers_config.yml
-    - name: Save aur cache
-      if: steps.cache-aur-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
-      with:
-        path: aur
-        #          key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }} #TODO: implement this for better caching
-        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
     - name: Build images
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
       args:

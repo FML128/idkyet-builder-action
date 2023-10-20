@@ -10,13 +10,18 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Get aur cache key
+      id: cache-aur-key
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
+      with:
+        args: aur_cache_key
     - name: Restore aur cache
       id: cache-aur-restore
       uses: https://code.forgejo.org/actions/cache/restore@v3
       with:
         path: aur
-        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
-        restore-keys: ${{ runner.os }}-${{ github.repository }}-aur-
+        key: aur-${{ steps.cache-aur-key.outputs.cache-aur-key }}
+        restore-keys: aur-
     - name: Build aur
       if: steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
@@ -27,5 +32,4 @@ runs:
       uses: actions/cache/save@v3
       with:
         path: aur
-        #          key: ${{ steps.cache-primes-restore.outputs.cache-primary-key }} #TODO: implement this for better caching
-        key: ${{ runner.os }}-${{ github.repository }}-aur-${{ github.run_number }}
+        key: aur-${{ steps.cache-aur-key.outputs.cache-aur-key }}
