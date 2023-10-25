@@ -24,12 +24,8 @@ runs:
   steps:
     - name: Restore and build aur
       uses: ./aur
-      with:
-        layer_config_file: layers_config.yml
     - name: Build images
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
-      args:
-        - build
+      uses: ./builder
     - name: Upload Packages
       run: |
         cd ${{ gitea.workspace }}/out
