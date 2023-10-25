@@ -23,4 +23,5 @@ runs:
   using: docker
   image: docker://git.fml128.ch/fml128/idkyet-builder:latest
   args:
-    - build ${{ inputs.layer_config_file }}
+    - build
+    - ${{ inputs.layer_config_file }}
