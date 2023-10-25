@@ -14,7 +14,7 @@ runs:
       id: cache-aur-key
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
       with:
-        args: aur_cache_key
+        args: generate_aur_cache_key
     - name: Restore aur cache
       id: cache-aur-restore
       uses: https://code.forgejo.org/actions/cache/restore@v3
@@ -26,7 +26,7 @@ runs:
       if: steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
       with:
-        args: aur
+        args: build_aur_packages
     - name: Save aur cache
       if: steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
