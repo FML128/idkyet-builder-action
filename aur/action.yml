@@ -21,7 +21,9 @@ runs:
       with:
         path: aur
         key: aur-${{ github.repository }}-${{ steps.cache-aur-key.outputs.cache-aur-key }}
-        restore-keys: aur-${{ github.repository }}-
+        restore-keys: |
+        aur-${{ github.repository }}-${{ steps.cache-aur-key.outputs.cache-aur-key-restore }}
+        aur-${{ github.repository }}-
     - name: Build aur
       if: steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: docker://git.fml128.ch/fml128/idkyet-builder:latest
