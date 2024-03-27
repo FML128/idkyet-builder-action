@@ -1,0 +1,13 @@
+name: 'idkyet builder'
+description: 'builder for the idkyet linux project'
+inputs:
+  layer_config_file:
+    description: 'layer config file'
+    required: true
+
+runs:
+  using: docker
+  image: docker://git.fml128.ch/fml128/idkyet-builder:2024.03.271747
+  args:
+    - verify
+    - ${{ inputs.layer_config_file }}
