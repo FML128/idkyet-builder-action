@@ -16,6 +16,7 @@ runs:
       with:
         args: generate_aur_cache_key ${{ inputs.layer_config_file }}
     - name: Restore aur cache
+      if: steps.cache-aur-key.outputs.cache-aur-key != 'empty'
       id: cache-aur-restore
       uses: https://code.forgejo.org/actions/cache/restore@v3
       with:
@@ -25,12 +26,12 @@ runs:
           aur-${{ github.repository }}-${{ steps.cache-aur-key.outputs.cache-aur-key-restore }}
           aur-${{ github.repository }}-
     - name: Build aur
-      if: steps.cache-aur-restore.outputs.cache-hit != 'true'
+      if: steps.cache-aur-key.outputs.cache-aur-key != 'empty' && steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: docker://git.fml128.ch/fml128/idkyet-builder:2024.03.271747
       with:
         args: build_aur_packages ${{ inputs.layer_config_file }}
     - name: Save aur cache
-      if: steps.cache-aur-restore.outputs.cache-hit != 'true'
+      if: steps.cache-aur-key.outputs.cache-aur-key != 'empty' && steps.cache-aur-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
         path: aur
