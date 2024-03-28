@@ -7,7 +7,7 @@ inputs:
 
 runs:
   using: docker
-  image: docker://git.fml128.ch/fml128/idkyet-builder:2024.03.271747
+  image: docker://git.fml128.ch/fml128/idkyet-builder:2024.03.280830
   args:
     - verify
     - ${{ inputs.layer_config_file }}
