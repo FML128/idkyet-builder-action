@@ -18,7 +18,7 @@ runs:
     - name: Restore aur cache
       if: steps.cache-aur-key.outputs.cache-aur-key != 'empty'
       id: cache-aur-restore
-      uses: https://code.forgejo.org/actions/cache/restore@v3
+      uses: https://code.forgejo.org/actions/cache/restore@v4
       with:
         path: aur
         key: aur-${{ github.repository }}-${{ steps.cache-aur-key.outputs.cache-aur-key }}
