@@ -24,8 +24,9 @@ inputs:
 #  hashes:
 #    description: 'json dict of hashes of all files'
 runs:
-  using: docker
-  image: docker://git.fml128.ch/fml128/idkyet-builder:2024.04.031454
-  args:
-    - build
-    - ${{ inputs.layer_config_file }}
+  using: "composite"
+  steps:
+    - name: Build image
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2024.04.031454
+      with:
+        args: build ${{ inputs.layer_config_file }}
