@@ -6,8 +6,9 @@ inputs:
     required: true
 
 runs:
-  using: docker
-  image: docker://git.fml128.ch/fml128/idkyet-builder:2024.04.031454
-  args:
-    - verify
-    - ${{ inputs.layer_config_file }}
+  using: "composite"
+  steps:
+    - name: Verify image
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2024.04.031454
+      with:
+        args: verify ${{ inputs.layer_config_file }}
