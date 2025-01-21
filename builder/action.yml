@@ -30,3 +30,9 @@ runs:
       uses: docker://git.fml128.ch/fml128/idkyet-builder:2025.01.201125
       with:
         args: build ${{ inputs.layer_config_file }}
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_OUT_DIR: ${{ inputs.out_dir }}
+        INPUT_SB_DB_KEY: ${{ inputs.sb_db_key }}
+        INPUT_SB_DB_PEM: ${{ inputs.sb_db_pem }}
+        INPUT_API_AUTH_TOKEN: ${{ inputs.api_auth_token }}
