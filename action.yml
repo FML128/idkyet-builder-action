@@ -10,11 +10,20 @@ inputs:
   version:
     description: 'version for release'
     required: true
+  registry_username:
+    description: 'username for registry'
+    required: true
+  registry_password:
+    description: 'password for registry'
+    required: true
   sb_db_key:
     description: 'secure_boot db key to sign efi'
     required: false
   sb_db_pem:
     description: 'secure_boot db pem to sign efi'
+    required: false
+  api_auth_token:
+    description: 'api_auth_token if needed to download base images'
     required: false
 #outputs:
 #  hashes:
@@ -24,22 +33,35 @@ runs:
   steps:
     - name: Restore and build aur
       uses: ./aur
+      with:
+        layer_config_file: ${{ inputs.layer_config_file }}
     - name: Build images
       uses: ./builder
+      with:
+        layer_config_file: ${{ inputs.layer_config_file }}
+        out_dir: ${{ inputs.out_dir }}
+        registry_username: ${{ inputs.registry_username }}
+        registry_password: ${{ inputs.registry_password }}
+        version: ${{ inputs.version }}
+        sb_db_key: ${{ inputs.sb_db_key }}
+        sb_db_pem: ${{ inputs.sb_db_pem }}
+        api_auth_token: ${{ inputs.api_auth_token }}
+
     - name: Upload Packages
       run: |
         cd ${{ gitea.workspace }}/out
         for f in *;do
           echo "Uploading $f"
           du -sh $f
-          curl --user "${{ gitea.actor }}:${{ secrets.PACKET_TOKEN }}" \
+          curl --user "${{ inputs.registry_username }}:${{ inputs.registry_password }}" \
             --upload-file "$f" \
             "https://git.fml128.ch/api/packages/${{ github.repository_owner }}/generic/${GITHUB_REPOSITORY#*/}/${{ steps.version.outputs.RELEASE_VERSION }}/$f"
         done
+      shell: bash
     - name: If failure delete packages
       if: failure()
       run: |
-        curl --user "${{ gitea.actor }}:${{ secrets.PACKET_TOKEN }}" \
+        curl --user "${{ inputs.registry_username }}:${{ inputs.registry_password }}" \
           -X DELETE \
           "https://git.fml128.ch/api/packages/${{ github.repository_owner }}/generic/${GITHUB_REPOSITORY#*/}/${{ steps.version.outputs.RELEASE_VERSION }}"
-
+      shell: bash
