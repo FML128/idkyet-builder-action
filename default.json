@@ -13,8 +13,8 @@
       "matchStrings": [
         "previous_layer: (?<depName>[^:]+):(?<currentValue>[^\\s]+)"
       ],
-      "datasourceTemplate": "gitea-tags",
-      "versioningTemplate": "loose"
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
     }
   ]
 }
