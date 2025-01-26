@@ -1,20 +1,19 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "local>FML128/renovate-config"
-  ],
-  "customManagers": [
-    {
-      "description": "idkyet updater",
-      "customType": "regex",
-      "fileMatch": [
-        "^.+\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "previous_layer: (?<depName>[^:]+):(?<currentValue>[^\\s]+)"
-      ],
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "docker"
-    }
-  ]
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": [
+		"local>FML128/renovate-config"
+	],
+	"customManagers": [
+		{
+			"description": "idkyet updater",
+			"customType": "regex",
+			"fileMatch": [
+				"^.+\\.ya?ml$"
+			],
+			"matchStrings": [
+				"previous_layer: (?<depName>[^:]+):(?<currentValue>[^\\s]+)"
+			],
+			"datasourceTemplate": "docker"
+		}
+	]
 }
