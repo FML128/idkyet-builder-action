@@ -47,4 +47,4 @@ runs:
         INPUT_SB_DB_KEY: ${{ inputs.sb_db_key }}
         INPUT_SB_DB_PEM: ${{ inputs.sb_db_pem }}
         INPUT_API_AUTH_TOKEN: ${{ inputs.api_auth_token }}
-        GPG_SIGN_KEY: ${{ secrets.gpg_sign_key }}
+        GPG_SIGN_KEY: ${{ inputs.gpg_sign_key }}
