@@ -9,6 +9,6 @@ runs:
   using: "composite"
   steps:
     - name: Validate image
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:2025.02.051256
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2025.02.061653
       with:
         args: validate ${{ inputs.layer_config_file }}
