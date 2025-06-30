@@ -31,6 +31,10 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Validate
+      uses: ./validate
+      with:
+        layer_config_file: ${{ inputs.layer_config_file }}
     - name: Restore and build aur
       uses: ./aur
       with:
