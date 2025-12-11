@@ -18,7 +18,7 @@ runs:
     - name: Restore aur cache
       if: steps.cache-aur-key.outputs.cache-aur-key != 'empty'
       id: cache-aur-restore
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v5
       with:
         path: aur
         key: aur-${{ github.repository }}-${{ steps.cache-aur-key.outputs.cache-aur-key }}
@@ -32,7 +32,7 @@ runs:
         args: build_aur_packages ${{ inputs.layer_config_file }}
     - name: Save aur cache
       if: steps.cache-aur-key.outputs.cache-aur-key != 'empty' && steps.cache-aur-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v5
       with:
         path: aur
         key: aur-${{ github.repository }}-${{ steps.cache-aur-key.outputs.cache-aur-key }}
