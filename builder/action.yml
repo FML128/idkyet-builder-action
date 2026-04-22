@@ -36,7 +36,7 @@ runs:
   using: "composite"
   steps:
     - name: Build image
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.04.211826
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.04.220804
       with:
         args: build ${{ inputs.layer_config_file }}
       env:
