@@ -1,9 +1,13 @@
-name: 'idkyet builder'
-description: 'builder for the idkyet linux project'
+name: 'idkyet validate'
+description: 'validate layer config for the idkyet linux project'
 inputs:
   layer_config_file:
     description: 'layer config file'
     required: true
+  check_packages:
+    description: 'also run pacman/AUR package existence checks (requires network)'
+    required: false
+    default: 'false'
 
 runs:
   using: "composite"
@@ -11,4 +15,4 @@ runs:
     - name: Validate image
       uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.05.131056
       with:
-        args: validate ${{ inputs.layer_config_file }}
+        args: validate ${{ inputs.check_packages == 'true' && '--check-packages' || '' }} ${{ inputs.layer_config_file }}

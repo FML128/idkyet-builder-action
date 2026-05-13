@@ -16,6 +16,10 @@ inputs:
   registry_password:
     description: 'password for registry'
     required: true
+  registry_url:
+    description: 'registry url (host) used for skopeo login and pushes'
+    required: false
+    default: 'git.fml128.ch'
   sb_db_key:
     description: 'secure_boot db key to sign efi'
     required: false
@@ -28,6 +32,14 @@ inputs:
   gpg_sign_key:
     description: 'gpg key to sign images'
     required: false
+  dry_run:
+    description: 'print the generated pipeline and exit without building or pushing'
+    required: false
+    default: 'false'
+  only:
+    description: 'build only the given layer id (and its internal ancestors)'
+    required: false
+    default: ''
 
 #outputs:
 #  hashes:
@@ -38,12 +50,13 @@ runs:
     - name: Build image
       uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.05.131056
       with:
-        args: build ${{ inputs.layer_config_file }}
+        args: build ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} ${{ inputs.only != '' && format('--only {0}', inputs.only) || '' }} ${{ inputs.layer_config_file }}
       env:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_OUT_DIR: ${{ inputs.out_dir }}
         INPUT_REGISTRY_USERNAME: ${{ inputs.registry_username }}
         INPUT_REGISTRY_PASSWORD: ${{ inputs.registry_password }}
+        INPUT_REGISTRY_URL: ${{ inputs.registry_url }}
         INPUT_SB_DB_KEY: ${{ inputs.sb_db_key }}
         INPUT_SB_DB_PEM: ${{ inputs.sb_db_pem }}
         INPUT_API_AUTH_TOKEN: ${{ inputs.api_auth_token }}
