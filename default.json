@@ -14,8 +14,7 @@
   ],
   "packageRules": [
     {
-      "description": "Auto-merge idkyet updates",
-      "matchDepPatterns": ["*idkyet*"],
+      "matchManagers": ["regex"],
       "automerge": true
     }
   ]
