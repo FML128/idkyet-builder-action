@@ -27,10 +27,10 @@ inputs:
     description: 'secure_boot db pem to sign efi'
     required: false
   api_auth_token:
-    description: 'api_auth_token if needed to download base images'
+    description: 'deprecated, unused: the builder never read it; kept so existing callers do not break'
     required: false
   gpg_sign_key:
-    description: 'gpg key to sign images'
+    description: 'deprecated, unused: the builder never signed with it; kept so existing callers do not break'
     required: false
   dry_run:
     description: 'print the generated pipeline and exit without building or pushing'
@@ -70,27 +70,55 @@ runs:
         version: ${{ inputs.version }}
         sb_db_key: ${{ inputs.sb_db_key }}
         sb_db_pem: ${{ inputs.sb_db_pem }}
-        api_auth_token: ${{ inputs.api_auth_token }}
-        gpg_sign_key: ${{ inputs.gpg_sign_key }}
         dry_run: ${{ inputs.dry_run }}
         only: ${{ inputs.only }}
 
     - name: Upload Packages
       if: inputs.dry_run != 'true'
+      env:
+        REGISTRY_USERNAME: ${{ inputs.registry_username }}
+        REGISTRY_PASSWORD: ${{ inputs.registry_password }}
+        REGISTRY_URL: ${{ inputs.registry_url }}
+        OUT_DIR: ${{ inputs.out_dir }}
+        PACKAGE_OWNER: ${{ github.repository_owner }}
+        PACKAGE_VERSION: ${{ inputs.version }}
       run: |
-        cd "${{ github.workspace }}/out"
-        for f in *;do
+        set -euo pipefail
+        # Credentials stay in env and reach curl through a netrc on a pipe, so
+        # they are neither part of the generated script nor visible in argv.
+        netrc() { printf 'machine %s login %s password %s\n' "$REGISTRY_URL" "$REGISTRY_USERNAME" "$REGISTRY_PASSWORD"; }
+        case "$OUT_DIR" in
+          /*) out="$OUT_DIR" ;;
+          *) out="$GITHUB_WORKSPACE/$OUT_DIR" ;;
+        esac
+        base_url="https://${REGISTRY_URL}/api/packages/${PACKAGE_OWNER}/generic/${GITHUB_REPOSITORY#*/}/${PACKAGE_VERSION}"
+        marker="${RUNNER_TEMP:-/tmp}/idkyet-upload-${GITHUB_RUN_ID:-0}-${GITHUB_RUN_ATTEMPT:-0}"
+        cd "$out"
+        for f in *; do
           echo "Uploading $f"
           du -sh "$f"
-          curl --fail --user "${{ inputs.registry_username }}:${{ inputs.registry_password }}" \
-            --upload-file "$f" \
-            "https://${{ inputs.registry_url }}/api/packages/${{ github.repository_owner }}/generic/${GITHUB_REPOSITORY#*/}/${{ inputs.version }}/$f"
+          # Only a run that started uploading may delete the version on failure.
+          touch "$marker"
+          curl --fail --netrc-file <(netrc) --upload-file "$f" "$base_url/$f"
         done
       shell: bash
     - name: If failure delete packages
       if: failure() && inputs.dry_run != 'true'
+      env:
+        REGISTRY_USERNAME: ${{ inputs.registry_username }}
+        REGISTRY_PASSWORD: ${{ inputs.registry_password }}
+        REGISTRY_URL: ${{ inputs.registry_url }}
+        PACKAGE_OWNER: ${{ github.repository_owner }}
+        PACKAGE_VERSION: ${{ inputs.version }}
       run: |
-        curl --user "${{ inputs.registry_username }}:${{ inputs.registry_password }}" \
-          -X DELETE \
-          "https://${{ inputs.registry_url }}/api/packages/${{ github.repository_owner }}/generic/${GITHUB_REPOSITORY#*/}/${{ inputs.version }}"
+        set -euo pipefail
+        marker="${RUNNER_TEMP:-/tmp}/idkyet-upload-${GITHUB_RUN_ID:-0}-${GITHUB_RUN_ATTEMPT:-0}"
+        if [ ! -e "$marker" ]; then
+          echo "This run uploaded nothing; leaving package version ${PACKAGE_VERSION} untouched"
+          exit 0
+        fi
+        netrc() { printf 'machine %s login %s password %s\n' "$REGISTRY_URL" "$REGISTRY_USERNAME" "$REGISTRY_PASSWORD"; }
+        curl --netrc-file <(netrc) -X DELETE \
+          "https://${REGISTRY_URL}/api/packages/${PACKAGE_OWNER}/generic/${GITHUB_REPOSITORY#*/}/${PACKAGE_VERSION}" \
+          || echo "warning: failed to delete partially uploaded package version ${PACKAGE_VERSION}"
       shell: bash
