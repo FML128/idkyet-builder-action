@@ -26,6 +26,10 @@ inputs:
   sb_db_pem:
     description: 'secure_boot db pem to sign efi'
     required: false
+  pcr_key:
+    description: 'PEM private key that signs the PCR policy of UKIs for layers with boot.pcr_signing (passed as INPUT_PCR_KEY)'
+    required: false
+    default: ''
   api_auth_token:
     description: 'deprecated, unused: the builder never read it; kept so existing callers do not break'
     required: false
@@ -48,7 +52,7 @@ runs:
   using: "composite"
   steps:
     - name: Build image
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.081607
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.081607@sha256:1729e8d127db3f810769eabb0f892bbbcd1b29ba2d4a6122618559b3b19588f7
       with:
         args: build ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} ${{ inputs.only != '' && format('--only {0}', inputs.only) || '' }} ${{ inputs.layer_config_file }}
       env:
@@ -59,3 +63,4 @@ runs:
         INPUT_REGISTRY_URL: ${{ inputs.registry_url }}
         INPUT_SB_DB_KEY: ${{ inputs.sb_db_key }}
         INPUT_SB_DB_PEM: ${{ inputs.sb_db_pem }}
+        INPUT_PCR_KEY: ${{ inputs.pcr_key }}

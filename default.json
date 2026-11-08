@@ -7,7 +7,7 @@
       "customType": "regex",
       "fileMatch": ["^.+\\.ya?ml$"],
       "matchStrings": [
-        "previous_layer: (?<depName>[^:]+):(?<currentValue>[^\\s]+)"
+        "previous_layer: (?<depName>[^:]+):(?<currentValue>[^\\s@]+)(?:@(?<currentDigest>sha256:[a-f0-9]{64}))?"
       ],
       "datasourceTemplate": "docker"
     }

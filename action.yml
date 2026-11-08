@@ -26,6 +26,10 @@ inputs:
   sb_db_pem:
     description: 'secure_boot db pem to sign efi'
     required: false
+  pcr_key:
+    description: 'PEM private key that signs the PCR policy of UKIs for layers with boot.pcr_signing (passed as INPUT_PCR_KEY)'
+    required: false
+    default: ''
   api_auth_token:
     description: 'deprecated, unused: the builder never read it; kept so existing callers do not break'
     required: false
@@ -70,6 +74,7 @@ runs:
         version: ${{ inputs.version }}
         sb_db_key: ${{ inputs.sb_db_key }}
         sb_db_pem: ${{ inputs.sb_db_pem }}
+        pcr_key: ${{ inputs.pcr_key }}
         dry_run: ${{ inputs.dry_run }}
         only: ${{ inputs.only }}
 
