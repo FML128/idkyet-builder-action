@@ -16,13 +16,13 @@
       "datasourceTemplate": "docker"
     },
     {
-      "description": "Digest-pinned secure builder image in workflow env (BUILDER / BUILDER_IMAGE); consumers cosign-verify it before use",
+      "description": "Digest-pinned idkyet builder image in workflow env (BUILDER / BUILDER_IMAGE of the secure pools); consumers cosign-verify it before use",
       "customType": "regex",
       "managerFilePatterns": [
         "/^\\.forgejo/workflows/[^/]+\\.ya?ml$/"
       ],
       "matchStrings": [
-        "(?<depName>git\\.fml128\\.ch/fml128/idkyet-builder-secure):(?<currentValue>[0-9]+(?:\\.[0-9]+)+)@(?<currentDigest>sha256:[a-f0-9]{64})"
+        "(?<depName>git\\.fml128\\.ch/fml128/idkyet-builder):(?<currentValue>[0-9]+(?:\\.[0-9]+)+)@(?<currentDigest>sha256:[a-f0-9]{64})"
       ],
       "datasourceTemplate": "docker"
     }

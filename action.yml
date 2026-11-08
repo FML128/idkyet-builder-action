@@ -44,6 +44,10 @@ inputs:
     description: 'build only the given layer id (and its internal ancestors)'
     required: false
     default: ''
+  arch:
+    description: 'build only the builds of this architecture (x86_64_v3, x86_64, x86_64_v4); empty builds every architecture a layer lists'
+    required: false
+    default: ''
   check_packages:
     description: 'run pacman/AUR package existence checks during validate'
     required: false
@@ -77,6 +81,7 @@ runs:
         pcr_key: ${{ inputs.pcr_key }}
         dry_run: ${{ inputs.dry_run }}
         only: ${{ inputs.only }}
+        arch: ${{ inputs.arch }}
 
     - name: Upload Packages
       if: inputs.dry_run != 'true'

@@ -44,6 +44,10 @@ inputs:
     description: 'build only the given layer id (and its internal ancestors)'
     required: false
     default: ''
+  arch:
+    description: 'build only the builds of this architecture (x86_64_v3, x86_64, x86_64_v4; passed as --arch); empty builds every architecture a layer lists'
+    required: false
+    default: ''
 
 #outputs:
 #  hashes:
@@ -54,7 +58,7 @@ runs:
     - name: Build image
       uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.081833@sha256:707f7d1045abfeef285e930a97e383ebedd2b0efe4f83a5f96094c3571dc471d
       with:
-        args: build ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} ${{ inputs.only != '' && format('--only {0}', inputs.only) || '' }} ${{ inputs.layer_config_file }}
+        args: build ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} ${{ inputs.only != '' && format('--only {0}', inputs.only) || '' }} ${{ inputs.arch != '' && format('--arch {0}', inputs.arch) || '' }} ${{ inputs.layer_config_file }}
       env:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_OUT_DIR: ${{ inputs.out_dir }}
