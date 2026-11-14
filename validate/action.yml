@@ -13,6 +13,6 @@ runs:
   using: "composite"
   steps:
     - name: Validate image
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.132321@sha256:e52ec368944ffb4daf10b970febe8f483dd1177f7839724b0ea6f977d92b48bd
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.140939@sha256:4d225468ffb268df11b87c564dff07aa50db52c96f5eab74db8d4512e2b08874
       with:
         args: validate ${{ inputs.check_packages == 'true' && '--check-packages' || '' }} ${{ inputs.layer_config_file }}
