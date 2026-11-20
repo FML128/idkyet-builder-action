@@ -12,7 +12,7 @@ runs:
   steps:
     - name: Get aur cache key
       id: cache-aur-key
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.200210@sha256:64f0b90026aa035d753d4ef3aaa8b7b279cc07f46a3429c0a2823366d61aa12c
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.202114@sha256:43cd902af73afa28e6e34e1412f016a3965e46c72ad3159af39f9e41e51e94da
       with:
         args: generate-aur-cache-key ${{ inputs.layer_config_file }}
     - name: Restore aur cache
@@ -27,7 +27,7 @@ runs:
           aur-${{ github.repository }}-
     - name: Build aur
       if: steps.cache-aur-key.outputs.cache-aur-key != 'empty' && steps.cache-aur-restore.outputs.cache-hit != 'true'
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.200210@sha256:64f0b90026aa035d753d4ef3aaa8b7b279cc07f46a3429c0a2823366d61aa12c
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.202114@sha256:43cd902af73afa28e6e34e1412f016a3965e46c72ad3159af39f9e41e51e94da
       with:
         args: build-aur-packages ${{ inputs.layer_config_file }}
     - name: Save aur cache
