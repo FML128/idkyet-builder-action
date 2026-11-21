@@ -56,7 +56,7 @@ runs:
   using: "composite"
   steps:
     - name: Build image
-      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.202114@sha256:43cd902af73afa28e6e34e1412f016a3965e46c72ad3159af39f9e41e51e94da
+      uses: docker://git.fml128.ch/fml128/idkyet-builder:2026.11.202359@sha256:1f12945b33ec0d6332b018e7cadcdc8e535e3becb085ae2c7a87879fe0aea1a5
       with:
         args: build ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} ${{ inputs.only != '' && format('--only {0}', inputs.only) || '' }} ${{ inputs.arch != '' && format('--arch {0}', inputs.arch) || '' }} ${{ inputs.layer_config_file }}
       env:
